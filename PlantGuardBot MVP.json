@@ -16,13 +16,7 @@
       ],
       "id": "14f9e977-6bd4-41bd-b8f2-e40e43c2a0d3",
       "name": "Telegram Trigger",
-      "webhookId": "5b40a323-db70-4093-9729-22fc560056f0",
-      "credentials": {
-        "telegramApi": {
-          "id": "fAFsJHNxO4Amb9Fj",
-          "name": "Telegram account"
-        }
-      }
+      "webhookId": "5b40a323-db70-4093-9729-22fc560056f0"
     },
     {
       "parameters": {
@@ -69,13 +63,7 @@
       ],
       "id": "088be7bf-d967-4e2b-aaa0-a65a9b5e40db",
       "name": "Solicitar Foto",
-      "webhookId": "d862530c-0634-4d91-a30a-52dd93a9f0b9",
-      "credentials": {
-        "telegramApi": {
-          "id": "fAFsJHNxO4Amb9Fj",
-          "name": "Telegram account"
-        }
-      }
+      "webhookId": "d862530c-0634-4d91-a30a-52dd93a9f0b9"
     },
     {
       "parameters": {
@@ -91,13 +79,7 @@
       ],
       "id": "fdea7934-3591-4f05-bdd4-708f1203af50",
       "name": "Enviar Resposta",
-      "webhookId": "418c5094-eb54-44fe-a351-88069d94688c",
-      "credentials": {
-        "telegramApi": {
-          "id": "fAFsJHNxO4Amb9Fj",
-          "name": "Telegram account"
-        }
-      }
+      "webhookId": "418c5094-eb54-44fe-a351-88069d94688c"
     },
     {
       "parameters": {
@@ -113,13 +95,7 @@
       ],
       "id": "47d77f18-37aa-4051-81cc-a256a9df8223",
       "name": "Get a file",
-      "webhookId": "c98f11ac-e431-43ea-a087-ca1fb121b603",
-      "credentials": {
-        "telegramApi": {
-          "id": "fAFsJHNxO4Amb9Fj",
-          "name": "Telegram account"
-        }
-      }
+      "webhookId": "c98f11ac-e431-43ea-a087-ca1fb121b603"
     },
     {
       "parameters": {
@@ -209,13 +185,7 @@
         -384
       ],
       "id": "f0769c84-b9f7-4497-a844-1b732c95dd7a",
-      "name": "Resposta Amigável1",
-      "credentials": {
-        "openAiApi": {
-          "id": "GnfKy9b47NRgTIzy",
-          "name": "n8n free OpenAI API credits"
-        }
-      }
+      "name": "Resposta Amigável1"
     },
     {
       "parameters": {
@@ -239,13 +209,7 @@
         -288
       ],
       "id": "fcb63aa5-5ef7-4af2-b402-0b13b7f6b004",
-      "name": "Analyze image",
-      "credentials": {
-        "openAiApi": {
-          "id": "GnfKy9b47NRgTIzy",
-          "name": "n8n free OpenAI API credits"
-        }
-      }
+      "name": "Analyze image"
     },
     {
       "parameters": {
@@ -261,13 +225,7 @@
       ],
       "id": "a846ba57-6a81-44b7-be25-6c8e9eff1ffd",
       "name": "Send a text message",
-      "webhookId": "bc52c698-178f-4136-8473-23c40ff409ea",
-      "credentials": {
-        "telegramApi": {
-          "id": "fAFsJHNxO4Amb9Fj",
-          "name": "Telegram account"
-        }
-      }
+      "webhookId": "bc52c698-178f-4136-8473-23c40ff409ea"
     },
     {
       "parameters": {
