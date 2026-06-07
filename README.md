@@ -1,4 +1,4 @@
-# 🌱 Plant Disease Bot MVP
+# 🌱 PlantGuardBot MVP
 
 Bot desenvolvido em **n8n** para identificação de doenças em plantas por meio de imagens enviadas via Telegram.
 
