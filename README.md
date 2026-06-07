@@ -230,6 +230,6 @@ em um cenário real do agronegócio.
 
 ## 👨‍💻 Autor
 
-**Mateus Henrique**
+**Mateus Henrique de Assis, Rafaek Arcanjo, Nicolas Gomes, Everton Freitas**
 
 Projeto desenvolvido para fins de estudo, demonstração técnica e portfólio profissional.
