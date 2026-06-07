@@ -1,0 +1,520 @@
+{
+  "name": "Plant Disease Bot MVP",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -368,
+        -192
+      ],
+      "id": "14f9e977-6bd4-41bd-b8f2-e40e43c2a0d3",
+      "name": "Telegram Trigger",
+      "webhookId": "5b40a323-db70-4093-9729-22fc560056f0",
+      "credentials": {
+        "telegramApi": {
+          "id": "fAFsJHNxO4Amb9Fj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{$json.message.photo}}",
+              "operator": {
+                "type": "array",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -144,
+        -192
+      ],
+      "id": "43bb6f94-cc58-47b7-bfec-02f8d0c9d2fa",
+      "name": "Foto enviada?"
+    },
+    {
+      "parameters": {
+        "chatId": "={{$json.message.chat.id}}",
+        "text": "Por favor, envie uma foto da planta para análise.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        80,
+        -96
+      ],
+      "id": "088be7bf-d967-4e2b-aaa0-a65a9b5e40db",
+      "name": "Solicitar Foto",
+      "webhookId": "d862530c-0634-4d91-a30a-52dd93a9f0b9",
+      "credentials": {
+        "telegramApi": {
+          "id": "fAFsJHNxO4Amb9Fj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{$('Telegram Trigger').item.json.message.chat.id}}",
+        "text": "={{ $json.mensagem }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        2448,
+        -384
+      ],
+      "id": "fdea7934-3591-4f05-bdd4-708f1203af50",
+      "name": "Enviar Resposta",
+      "webhookId": "418c5094-eb54-44fe-a351-88069d94688c",
+      "credentials": {
+        "telegramApi": {
+          "id": "fAFsJHNxO4Amb9Fj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{$json.message.photo[$json.message.photo.length - 1].file_id}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        -288
+      ],
+      "id": "47d77f18-37aa-4051-81cc-a256a9df8223",
+      "name": "Get a file",
+      "webhookId": "c98f11ac-e431-43ea-a087-ca1fb121b603",
+      "credentials": {
+        "telegramApi": {
+          "id": "fAFsJHNxO4Amb9Fj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8f30f839-9a9b-41fe-9f2a-37619058eb74",
+              "name": "=mensagem",
+              "value": "={{$json.output[0].content[0].text}}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2224,
+        -384
+      ],
+      "id": "e9ae972d-715d-4c4a-9290-67783e9ca32f",
+      "name": "mensagem"
+    },
+    {
+      "parameters": {
+        "operation": "binaryToPropery",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        304,
+        -288
+      ],
+      "id": "e7dafbaa-80f0-4087-991d-9f300560f649",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://plant.id/api/v3/health_assessment?details=local_name,description,url,treatment,classification,common_names,cause",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Api-Key"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"images\": [\"data:image/jpeg;base64,{{ $('Extract from File').item.json.data }}\"],\n  \"similar_images\": true\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1648,
+        -384
+      ],
+      "id": "5f515dd1-c251-4600-8ae6-963712411b33",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-NANO"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Você é um agrônomo experiente conversando com um agricultor pelo Telegram.\n\nA API de diagnóstico retornou os seguintes dados:\n\nProblema: {{$json.result.disease.suggestions[0].name}}\nConfiança: {{ Math.round($json.result.disease.suggestions[0].probability * 100) }}\nDescrição: {{$json.result.disease.suggestions[0].details.description}}\nTratamentos: {{ JSON.stringify($json.result.disease.suggestions[0].details.treatment) }}\n\nCom base nisso, escreva uma resposta em português brasileiro, de forma natural e acolhedora, como se estivesse explicando pessoalmente para o agricultor. Evite termos muito técnicos — quando usar, explique entre parênteses.\n\nA resposta deve seguir exatamente este formato:\n\n🌱 *Diagnóstico*\n\n*Problema identificado:*\n[nome do problema, em linguagem simples]\n\n*Confiança da análise:*\n[percentual]\n\n*O que está acontecendo:*\n[2 a 3 frases explicando o problema de forma simples e humana]\n\n*Sinais visíveis:*\n- [sinal 1]\n- [sinal 2]\n- [sinal 3]\n\n*Por que isso acontece:*\n- [causa 1]\n- [causa 2]\n\n*O que fazer agora:*\n- [ação 1]\n- [ação 2]\n- [ação 3]\n\n*Como prevenir no futuro:*\n- [dica 1]\n- [dica 2]"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        1872,
+        -384
+      ],
+      "id": "f0769c84-b9f7-4497-a844-1b732c95dd7a",
+      "name": "Resposta Amigável1",
+      "credentials": {
+        "openAiApi": {
+          "id": "GnfKy9b47NRgTIzy",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-nano",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-NANO"
+        },
+        "text": "Analise a imagem enviada e responda APENAS com um JSON válido, sem texto adicional:\n\n{\n  \"eh_planta\": true or false,\n  \"motivo\": \"breve explicação\"\n}\n\nRetorne true somente se a imagem contiver claramente uma planta, folha, fruto, raiz ou parte vegetal. Para qualquer outra coisa (pessoa, animal, objeto, paisagem sem planta, etc), retorne false.",
+        "inputType": "base64",
+        "binaryPropertyName": "=data",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.3,
+      "position": [
+        976,
+        -288
+      ],
+      "id": "fcb63aa5-5ef7-4af2-b402-0b13b7f6b004",
+      "name": "Analyze image",
+      "credentials": {
+        "openAiApi": {
+          "id": "GnfKy9b47NRgTIzy",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Só consigo ajudar com doenças e problemas em plantas 🌿  Por favor, envie uma foto de uma planta, folha ou parte vegetal para eu analisar.  Não estou habilitado para identificar outros tipos de imagens.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1424,
+        -192
+      ],
+      "id": "a846ba57-6a81-44b7-be25-6c8e9eff1ffd",
+      "name": "Send a text message",
+      "webhookId": "bc52c698-178f-4136-8473-23c40ff409ea",
+      "credentials": {
+        "telegramApi": {
+          "id": "fAFsJHNxO4Amb9Fj",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f8b8f5c9-86de-42a5-8f74-6a7d927b31e6",
+              "leftValue": "={{ JSON.parse($json[0].content[0].text.trim()).eh_planta }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        -288
+      ],
+      "id": "79707b3d-5ce5-43f6-9b5e-a5ff8d166887",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f3abdddf-7f44-4bb1-a4bd-773978ca9e2f",
+              "name": "imageBase64",
+              "value": "={{ $json.data }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        528,
+        -288
+      ],
+      "id": "b480a8ed-d027-49cb-bfe5-766757e468e5",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "toBinary",
+        "sourceProperty": "imageBase64",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        -288
+      ],
+      "id": "4b75d2b8-f275-4da2-8796-2050eef7a9c0",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "jsCode": "const base64 = $('Extract from File').item.json.data;\n\nreturn [{\n  json: {\n    images: [`data:image/jpeg;base64,${base64}`],\n    similar_images: true\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1424,
+        -384
+      ],
+      "id": "7a4358a7-c5ac-4583-9b05-14680bcb29d6",
+      "name": "Code in JavaScript"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Foto enviada?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Foto enviada?": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Solicitar Foto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "mensagem": {
+      "main": [
+        [
+          {
+            "node": "Enviar Resposta",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Resposta Amigável1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resposta Amigável1": {
+      "main": [
+        [
+          {
+            "node": "mensagem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Analyze image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "fab492e7-a502-4c9f-9d69-846536cdb6e5",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1a13f6036b4d49e5df82e220759f2275c5de10cdf585a4d1bab7e8d90175a661"
+  },
+  "nodeGroups": [],
+  "id": "LhvMfdqwgSrzsP68",
+  "tags": []
+}
